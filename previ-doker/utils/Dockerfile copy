@@ -1,0 +1,71 @@
+#FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-alpine3.7
+#EXPOSE 8080-9091 
+EXPOSE 8080
+EXPOSE 8091
+EXPOSE 9091
+EXPOSE 8888
+EXPOSE 8674
+
+RUN apk add --no-cache bash
+RUN apk update && apk add --no-cache supervisor
+RUN apk update && apk add --no-cache nano
+RUN apk update && apk add --no-cache curl
+
+
+COPY supervisord.conf /etc/supervisord.conf
+#ADD jar-supervisor.conf /etc/supervisor/conf.d/jar-supervisord.conf
+#WORKDIR /etc/supervisor/conf.d
+
+RUN mkdir -p /opt/previsora
+RUN mkdir -p /opt/previsora/log
+RUN mkdir -p /var/services
+
+ADD var/services /var/services
+ADD api_rest-GESTOR.jar /opt/previsora
+ADD api_rest-LOGS.jar /opt/previsora
+ADD api_rest-MAESTROS.jar /opt/previsora
+ADD api_rest-SEGURIDAD.jar /opt/previsora
+ADD api_rest-TOKEN_SERVICES.jar /opt/previsora
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+
+#CMD ["/bin/bash", "-c", "/opt/previsora/commands.sh"]
+
+#$ docker run --name transversales -d -p 8080:8080 -p 8888:8888 -p 8091:8091 -p 9091:9091 -p 8674:8674 previsora
+
+
+#ADD commands.sh .
+
+#ENTRYPOINT ["/opt/previsora/commands.sh"]
+#ENTRYPOINT ["java","-jar","/opt/api_rest-GESTOR.jar "]
+#CMD ["/bin/bash", "-c", "java -jar /opt/api_rest-GESTOR.jar;java -jar /opt/api_rest-LOGS.jar"]
+
+#CMD ["/bin/bash", "-c", "./commands.sh"]
+
+#ARG JAR_FILE=target/my-app-0.1.jar
+#ADD ${JAR_FILE} my-app.jar
+#ENTRYPOINT ["java","-jar","/my-app.jar"]
+
+#CMD ["java","-jar","/optapi_rest-GESTOR.jar  "]
+#CMD ["java","-jar","/opt/api_rest-LOGS.jar"]
+#CMD ["java","-jar","/opt/api_rest-MAESTROS.jar"]
+#CMD ["java","-jar","/opt/api_rest-SEGURIDAD.jar"]
+#CMD ["java","-jar","/opt/previsora/api_rest-TOKEN_SERVICES.jar"]
+#CMD ["/bin/bash", "-c", "java -jar /opt/previsora/api_rest-GESTOR.jar;java -jar /opt/previsora/api_rest-LOGS.jar;java -jar /opt/previsora/api_rest-SEGURIDAD.jar;java -jar /opt/previsora/api_rest-MAESTROS.jar;java -jar /opt/previsora/api_rest-TOKEN_SERVICES.jar"]
+
+
+#ADD gestor.sh /opt/previsora
+#ADD logs.sh /opt/previsora
+#ADD maestros.sh /opt/previsora
+#ADD seguridad.sh /opt/previsora
+#ADD token.sh /opt/previsora
+
+#RUN ["chmod", "+x", "/opt/previsora/gestor.sh"]
+#RUN ["chmod", "+x", "/opt/previsora/logs.sh"]
+#RUN ["chmod", "+x", "/opt/previsora/maestros.sh"]
+#RUN ["chmod", "+x", "/opt/previsora/seguridad.sh"]
+#RUN ["chmod", "+x", "/opt/previsora/token.sh"]
+
+#ENTRYPOINT ["/opt/previsora/gestor.sh"]

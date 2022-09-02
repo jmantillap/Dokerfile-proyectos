@@ -1,0 +1,24 @@
+
+FROM openjdk:8-jdk-alpine3.7
+EXPOSE 8080
+EXPOSE 8091
+EXPOSE 9091
+EXPOSE 8888
+EXPOSE 8674
+
+RUN apk add --no-cache bash
+
+RUN mkdir -p /opt/previsora
+RUN mkdir -p /var/services
+
+ADD var/services /var/services
+ADD api_rest-GESTOR.jar /opt/previsora
+ADD api_rest-LOGS.jar /opt/previsora
+ADD api_rest-MAESTROS.jar /opt/previsora
+ADD api_rest-SEGURIDAD.jar /opt/previsora
+ADD api_rest-TOKEN_SERVICES.jar /opt/previsora
+
+CMD ["/bin/bash", "-c", "java -jar /opt/previsora/api_rest-GESTOR.jar;java -jar /opt/previsora/api_rest-LOGS.jar;java -jar /opt/previsora/api_rest-SEGURIDAD.jar;java -jar /opt/previsora/api_rest-MAESTROS.jar;java -jar /opt/previsora/api_rest-TOKEN_SERVICES.jar"]
+
+#$ docker run --name transversales -d -p 8080:8080 -p 8888:8888 -p 8091:8091 -p 9091:9091 -p 8674:8674 previsora
+
